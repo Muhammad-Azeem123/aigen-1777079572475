@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elegant Glassmorphic Clock</title>
+    <!-- Google Fonts - Montserrat for modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /*
+        * CSS Styling
+        * - Dark, classy theme with glassmorphism
+        * - Elegant typography
+        * - Responsive design
+        * - Light/Dark mode variants
+        */
+
+        :root {
+            /* Dark Theme Variables */
+            --bg-color-dark: #0f172a; /* Deep Navy */
+            --bg-gradient-start-dark: #1e293b;
+            --bg-gradient-end-dark: #0f172a;
+            --clock-bg-dark: rgba(255, 255, 255, 0.05);
+            --clock-border-dark: rgba(255, 255, 255, 0.1);
+            --clock-shadow-dark: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --text-color-dark: #e2e8f0; /* Soft white/light gray */
+            --glow-color-dark: #a8dadc; /* Soft cyan */
+            --button-bg-dark: rgba(255, 255, 255, 0.1);
+            --button-hover-bg-dark: rgba(255, 255, 255, 0.2);
+            --button-border-dark: rgba(255, 255, 255, 0.15);
+            --am-pm-color-dark: #cbd5e1;
+
+            /* Light Theme Variables */
+            --bg-color-light: #f1f5f9; /* Soft light gray */
+            --bg-gradient-start-light: #f8fafc;
+            --bg-gradient-end-light: #e2e8f0;
+            --clock-bg-light: rgba(255, 255, 255, 0.7);
+            --clock-border-light: rgba(226, 232, 240, 0.8);
+            --clock-shadow-light: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            --text-color-light: #334155; /* Darker text */
+            --glow-color-light: #4c628e; /* Subtle blue */
+            --button-bg-light: rgba(226, 232, 240, 0.5);
+            --button-hover-bg-light: rgba(226, 232, 240, 0.8);
+            --button-border-light: rgba(203, 213, 225, 0.8);
+            --am-pm-color-light: #64748b;
+        }
+
+        /* Base styles and dark theme defaults */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--bg-color-dark);
+            background: linear-gradient(135deg, var(--bg-gradient-start-dark) 0%, var(--bg-gradient-end-dark) 100%);
+            color: var(--text-color-dark);
+            transition: background 0.8s ease, color 0.8s ease;
+            overflow: hidden; /* Prevent scrollbar from background effects */
+        }
+
+        /* Light theme overrides */
+        body.light-theme {
+            background: var(--bg-color-light);
+            background: linear-gradient(135deg, var(--bg-gradient-start-light) 0%, var(--bg-gradient-end-light) 100%);
+            color: var(--text-color-light);
+        }
+
+        .clock-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 50px;
+            border-radius: 25px;
+            background: var(--clock-bg-dark);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px); /* Safari support */
+            border: 1px solid var(--clock-border-dark);
+            box-shadow: var(--clock-shadow-dark);
+            transition: background 0.8s ease, border 0.8s ease, box-shadow 0.8s ease;
+            gap: 25px; /* Spacing between digital, date, and controls */
+            max-width: 90%; /* Responsive width */
+            margin: 20px; /* Some margin for smaller screens */
+        }
+
+        body.light-theme .clock-container {
+            background: var(--clock-bg-light);
+            border: 1px solid var(--clock-border-light);
+            box-shadow: var(--clock-shadow-light);
+        }
+
+        .digital-clock {
+            font-size: 6rem; /* Large for time */
+            font-weight: 200; /* Thin font */
+            letter-spacing: 5px;
+            display: flex;
+            align-items: baseline;
+            position: relative;
+            text-shadow: 0 0 10px var(--glow-color-dark), 0 0 20px var(--glow-color-dark), 0 0 30px rgba(168, 218, 220, 0.5); /* Soft glow */
+            transition: color 0.8s ease, text-shadow 0.8s ease;
+            line-height: 1; /* Adjust line height to prevent extra spacing */
+        }
+
+        body.light-theme .digital-clock {
+            color: var(--text-color-light);
+            text-shadow: 0 0 5px var(--glow-color-light), 0 0 10px rgba(76, 98, 142, 0.3);
+        }
+
+        .digital-clock .am-pm {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-left: 15px;
+            align-self: flex-end; /* Align with the bottom of time digits */
+            color: var(--am-pm-color-dark);
+            transition: color 0.8s ease;
+            text-shadow: none; /* No glow for AM/PM */
+        }
+
+        body.light-theme .digital-clock .am-pm {
+            color: var(--am-pm-color-light);
+        }
+
+
+        .date-display {
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--am-pm-color-dark); /* Slightly softer than main time */
+            transition: color 0.8s ease;
+            margin-top: -15px; /* Pull date closer to time */
+            text-shadow: 0 0 5px rgba(168, 218, 220, 0.2);
+        }
+
+        body.light-theme .date-display {
+            color: var(--am-pm-color-light);
+            text-shadow: 0 0 3px rgba(76, 98, 142, 0.1);
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+            justify-content: center;
+        }
+
+        .controls button {
+            background: var(--button-bg-dark);
+            color: var(--text-color-dark);
+            border: 1px solid var(--button-border-dark);
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 400;
+            cursor: pointer;
+            outline: none;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, color 0.8s ease, border 0.8s ease;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        body.light-theme .controls button {
+            background: var(--button-bg-light);
+            color: var(--text-color-light);
+            border: 1px solid var(--button-border-light);
+        }
+
+        .controls button:hover {
+            background: var(--button-hover-bg-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        body.light-theme .controls button:hover {
+            background: var(--button-hover-bg-light);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls button:active {
+            transform: translateY(0);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Analog Clock Styling */
+        .analog-clock-container {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 1px solid var(--clock-border-dark);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+            margin-top: 30px;
+            background: var(--button-bg-dark); /* Subtle background for analog clock */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            transition: background 0.8s ease, border 0.8s ease;
+        }
+
+        body.light-theme .analog-clock-container {
+            border: 1px solid var(--clock-border-light);
+            background: var(--button-bg-light);
+        }
+
+        .center-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--glow-color-dark);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            box-shadow: 0 0 5px var(--glow-color-dark);
+            transition: background 0.8s ease, box-shadow 0.8s ease;
+        }
+
+        body.light-theme .center-dot {
+            background: var(--glow-color-light);
+            box-shadow: 0 0 5px var(--glow-color-light);
+        }
+
+        .hand {
+            position: absolute;
+            left: 50%;
+            bottom: 50%; /* Origin at the bottom center */
+            transform-origin: bottom center;
+            background: var(--text-color-dark);
+            border-radius: 2px;
+            transition: background 0.8s ease;
+        }
+
+        body.light-theme .hand {
+            background: var(--text-color-light);
+        }
+
+        .hour-hand {
+            width: 4px;
+            height: 30%; /* 30% of clock container height */
+            margin-left: -2px; /* Center alignment */
+            background: var(--text-color-dark);
+        }
+
+        .minute-hand {
+            width: 3px;
+            height: 40%;
+            margin-left: -1.5px;
+            background: var(--text-color-dark);
+        }
+
+        .second-hand {
+            width: 2px;
+            height: 45%;
+            margin-left: -1px;
+            background: var(--glow-color-dark); /* Make second hand glow */
+            box-shadow: 0 0 5px var(--glow-color-dark);
+            z-index: 5;
+            transition: background 0.8s ease, box-shadow 0.8s ease;
+        }
+
+        body.light-theme .second-hand {
+            background: var(--glow-color-light);
+            box-shadow: 0 0 5px var(--glow-color-light);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .clock-container {
+                padding: 30px 30px;
+                gap: 15px;
+            }
+
+            .digital-clock {
+                font-size: 4rem; /* Smaller for tablets */
+                letter-spacing: 3px;
+            }
+
+            .digital-clock .am-pm {
+                font-size: 1.2rem;
+                margin-left: 10px;
+            }
+
+            .date-display {
+                font-size: 1.2rem;
+                letter-spacing: 1.5px;
+            }
+
+            .controls {
+                gap: 15px;
+            }
+
+            .controls button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            .analog-clock-container {
+                width: 120px;
+                height: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .clock-container {
+                padding: 20px 20px;
+                border-radius: 20px;
+            }
+
+            .digital-clock {
+                font-size: 3rem; /* Even smaller for mobile */
+                letter-spacing: 2px;
+            }
+
+            .digital-clock .am-pm {
+                font-size: 1rem;
+                margin-left: 8px;
+            }
+
+            .date-display {
+                font-size: 1rem;
+                letter-spacing: 1px;
+                margin-top: -10px;
+            }
+
+            .controls {
+                flex-direction: column; /* Stack buttons vertically */
+                gap: 10px;
+                width: 100%; /* Full width buttons */
+            }
+
+            .controls button {
+                width: auto; /* Auto width but limited by container */
+                padding: 12px;
+            }
+
+            .analog-clock-container {
+                width: 100px;
+                height: 100px;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="clock-container">
+        <div id="digitalClock" class="digital-clock">
+            <!-- Time will be injected here by JavaScript -->
+            <span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span>
+            <span class="am-pm"></span>
+        </div>
+        <div id="dateDisplay" class="date-display">
+            <!-- Date will be injected here by JavaScript -->
+            Day, Month 00, 0000
+        </div>
+
+        <div class="controls">
+            <button id="toggleFormat">Toggle 12/24 Hour</button>
+            <button id="toggleTheme">Toggle Light/Dark Mode</button>
+            <button id="toggleAnalog">Toggle Analog Clock</button>
+        </div>
+
+        <div id="analogClock" class="analog-clock-container" style="display: none;">
+            <div class="center-dot"></div>
+            <div class="hand hour-hand" id="hourHand"></div>
+            <div class="hand minute-hand" id="minuteHand"></div>
+            <div class="hand second-hand" id="secondHand"></div>
+        </div>
+    </div>
+
+    <script>
+        /*
+        * JavaScript Logic
+        * - Real-time clock update (digital and analog)
+        * - Date display
+        * - 12-hour / 24-hour format toggle
+        * - Light / Dark mode toggle
+        * - Analog clock visibility toggle
+        * - Efficient, pure JavaScript
+        */
+
+        const digitalClockElem = document.getElementById('digitalClock');
+        const dateDisplayElem = document.getElementById('dateDisplay');
+        const toggleFormatBtn = document.getElementById('toggleFormat');
+        const toggleThemeBtn = document.getElementById('toggleTheme');
+        const toggleAnalogBtn = document.getElementById('toggleAnalog');
+        const analogClockElem = document.getElementById('analogClock');
+
+        const hourHand = document.getElementById('hourHand');
+        const minuteHand = document.getElementById('minuteHand');
+        const secondHand = document.getElementById('secondHand');
+
+        let is24HourFormat = false; // Default to 12-hour format
+        let isAnalogVisible = false; // Default analog clock hidden
+
+        /**
+         * Pads a number with a leading zero if it's less than 10.
+         * @param {number} num - The number to pad.
+         * @returns {string} The padded number as a string.
+         */
+        function padZero(num) {
+            return num < 10 ? '0' + num : num;
+        }
+
+        /**
+         * Updates the digital clock and date display.
+         */
+        function updateDigitalClock() {
+            const now = new Date();
+
+            // Date formatting
+            const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = now.toLocaleDateString('en-US', optionsDate);
+            dateDisplayElem.textContent = formattedDate;
+
+            // Time formatting
+            let hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            let ampm = '';
+
+            if (!is24HourFormat) {
+                ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours === 0 ? 12 : hours; // The hour '0' should be '12' when using 12-hour format
+            }
+
+            const formattedTime = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
+            
+            // Inject into digital clock elements, including AM/PM
+            digitalClockElem.querySelector('.hours').textContent = padZero(hours);
+            digitalClockElem.querySelector('.minutes').textContent = padZero(minutes);
+            digitalClockElem.querySelector('.seconds').textContent = padZero(seconds);
+            digitalClockElem.querySelector('.am-pm').textContent = ampm;
+        }
+
+        /**
+         * Updates the analog clock hands.
+         */
+        function updateAnalogClock() {
+            if (!isAnalogVisible) return;
+
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const minutes = now.getMinutes();
+            const hours = now.getHours();
+
+            // Calculate degrees for hands
+            // Second hand moves 6 degrees every second (360 / 60)
+            const secondDegrees = seconds * 6;
+            // Minute hand moves 6 degrees every minute, plus 0.1 degrees for every second (360 / 60 + (360 / 3600))
+            const minuteDegrees = (minutes * 6) + (seconds * 0.1);
+            // Hour hand moves 30 degrees every hour, plus 0.5 degrees for every minute (360 / 12 + (360 / 720))
+            const hourDegrees = (hours * 30) + (minutes * 0.5);
+
+            secondHand.style.transform = `translateY(50%) rotate(${secondDegrees}deg)`;
+            minuteHand.style.transform = `translateY(50%) rotate(${minuteDegrees}deg)`;
+            hourHand.style.transform = `translateY(50%) rotate(${hourDegrees}deg)`;
+        }
+
+        /**
+         * Toggles between 12-hour and 24-hour time formats.
+         */
+        toggleFormatBtn.addEventListener('click', () => {
+            is24HourFormat = !is24HourFormat;
+            updateDigitalClock(); // Update immediately after toggle
+            toggleFormatBtn.textContent = is24HourFormat ? 'Switch to 12-Hour' : 'Switch to 24-Hour';
+        });
+
+        /**
+         * Toggles between dark and light themes.
+         */
+        toggleThemeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            const isLightTheme = document.body.classList.contains('light-theme');
+            toggleThemeBtn.textContent = isLightTheme ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+        });
+
+        /**
+         * Toggles the visibility of the analog clock.
+         */
+        toggleAnalogBtn.addEventListener('click', () => {
+            isAnalogVisible = !isAnalogVisible;
+            analogClockElem.style.display = isAnalogVisible ? 'block' : 'none';
+            toggleAnalogBtn.textContent = isAnalogVisible ? 'Hide Analog Clock' : 'Show Analog Clock';
+            if (isAnalogVisible) {
+                // If analog clock is shown, ensure hands are updated immediately
+                updateAnalogClock();
+            }
+        });
+
+        // Initialize clock and update every second
+        function initClock() {
+            updateDigitalClock();
+            updateAnalogClock(); // Initial update for analog clock if visible
+            setInterval(updateDigitalClock, 1000);
+            setInterval(updateAnalogClock, 1000);
+        }
+
+        // Run the clock initialization when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', initClock);
+    </script>
+</body>
+</html>
