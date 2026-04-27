@@ -1,0 +1,106 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow: hidden; /* Prevent scrollbars if clock is large */
+}
+
+.clock-container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    background-color: #fff;
+    border: 10px solid #333;
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    display: flex; /* Used to center center-dot, but hands are absolute */
+    justify-content: center;
+    align-items: center;
+}
+
+.clock-face {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+/* Center dot for visual reference of the pivot point */
+.center-dot {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: #333;
+    border-radius: 50%;
+    z-index: 10;
+    /* Position exactly in the center */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Base styles for all hands */
+.hand {
+    position: absolute;
+    /* Position the bottom-left corner of the hand at the clock's center */
+    bottom: 50%;
+    left: 50%;
+    background-color: #333;
+    /* Translate left by half its width to perfectly center its vertical axis at 'left: 50%' */
+    /* This combined with 'bottom: 50%' places its bottom-center at the clock's center */
+    transform: translateX(-50%); 
+    /* THIS IS THE CRUCIAL PART: Define the rotation origin as the bottom-center of the hand element */
+    transform-origin: 50% 100%; /* Or 'center bottom' */
+    border-radius: 5px; /* Slightly rounded tips for aesthetics */
+    pointer-events: none; /* Prevent hands from interfering with mouse events */
+}
+
+/* Specific styles for each hand type */
+.hour-hand {
+    width: 8px;
+    height: 70px; /* Length from the center */
+    background-color: #333;
+    z-index: 7;
+}
+
+.minute-hand {
+    width: 6px;
+    height: 100px; /* Length from the center */
+    background-color: #555;
+    z-index: 8;
+}
+
+.second-hand {
+    width: 2px;
+    height: 120px; /* Length from the center */
+    background-color: #e74c3c; /* Red color for second hand */
+    z-index: 9;
+    border-radius: 2px; /* Sharper tip for second hand */
+}
+
+/* Optional: Add hour/minute marks for a more complete clock */
+/* Example for hour marks */
+/*
+.clock-face::before, .clock-face::after {
+    content: '';
+    position: absolute;
+    background-color: #333;
+    z-index: 1;
+}
+.clock-face::before { width: 4px; height: 100%; }
+.clock-face::after { height: 4px; width: 100%; }
+
+.clock-face div[class^="mark-"] {
+    position: absolute;
+    background-color: #ccc;
+    width: 3px;
+    height: 15px;
+    top: 0;
+    left: 50%;
+    transform-origin: 50% 150px; // Half of clock-container width + 15px mark height
+}
+*/
